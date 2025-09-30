@@ -18,10 +18,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        192,
-        224
+        -48,
+        192
       ],
-      "id": "e10c8ace-20eb-4610-ab30-00c4659765c6",
+      "id": "b4bce3e0-8e5e-4613-86fa-1882cd3abe1e",
       "name": "Crear Mensaje"
     },
     {
@@ -31,23 +31,23 @@
       "type": "n8n-nodes-base.dateTime",
       "typeVersion": 2,
       "position": [
-        400,
-        224
+        176,
+        192
       ],
-      "id": "fc389af2-c813-46b0-9c65-d190ed8c5a97",
+      "id": "1789df40-18d2-4b3e-a05b-0d513e0017cb",
       "name": "get dateTime"
     },
     {
       "parameters": {
-        "html": "<!DOCTYPE html>\n\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $workflow.name }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <h1>{{ $workflow.name }}</h1>\n    <h2>{{ $('Crear Mensaje').item.json.message }}</h2>\n    <h3>{{ $json.formattedDate }}</h3>\n  </div>\n</body>\n</html>\n\n<style>\n.container {\n  background-color: #ffffff;\n  text-align: center;\n  padding: 16px;\n  border-radius: 8px;\n}\n\nh1 {\n  color: #ff6d5a;\n  font-size: 24px;\n  font-weight: bold;\n  padding: 8px;\n}\n\nh2 {\n  color: #909399;\n  font-size: 18px;\n  font-weight: bold;\n  padding: 8px;\n}\n</style>\n\n<script>\nconsole.log(\"Hello World!\");\n</script>"
+        "html": "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $workflow.name }}</title>\n  <style>\n    body {\n      font-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif;\n      background: linear-gradient(45deg, #3b2f2f, #6e4b3a, #d2b48c, #6e4b3a, #3b2f2f);\n      background-size: 400% 400%;\n      animation: diagonalEarth 20s ease infinite;\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      height: 100vh;\n      margin: 0;\n      overflow: hidden;\n    }\n\n    .container {\n      background-color: rgba(255, 255, 255, 0.9);\n      text-align: center;\n      padding: 24px 32px;\n      border-radius: 16px;\n      box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.25);\n      animation: fadeInScale 1.2s ease forwards;\n      opacity: 0;\n      transform: scale(0.8);\n      position: relative;\n      overflow: hidden;\n    }\n\n    h1, h2, h3 {\n      position: relative;\n      z-index: 2;\n    }\n\n    h1 {\n      font-size: 32px;\n      font-weight: bold;\n      padding: 8px;\n      background: linear-gradient(45deg, #4caf50, #8bc34a, #cddc39, #8bc34a, #4caf50);\n      background-size: 300% 300%;\n      -webkit-background-clip: text;\n      -webkit-text-fill-color: transparent;\n      animation: gradientText 8s ease infinite;\n    }\n\n    h2 {\n      font-size: 20px;\n      font-weight: bold;\n      padding: 8px;\n      color: #4e4e4e;\n    }\n\n    h3 {\n      font-size: 16px;\n      font-weight: normal;\n      margin: 6px 0;\n      color: #666;\n    }\n\n    /* Animaciones */\n    @keyframes fadeInScale {\n      from { opacity: 0; transform: scale(0.8); }\n      to { opacity: 1; transform: scale(1); }\n    }\n\n    @keyframes diagonalEarth {\n      0% { background-position: 0% 0%; }\n      50% { background-position: 100% 100%; }\n      100% { background-position: 0% 0%; }\n    }\n\n    @keyframes gradientText {\n      0% { background-position: 0% 50%; }\n      50% { background-position: 100% 50%; }\n      100% { background-position: 0% 50%; }\n    }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <h1>{{ $workflow.name }}</h1>\n    <h2>{{ $('Crear Mensaje').item.json.message }}</h2>\n    <h3>{{ $json.formattedDate }}</h3>\n    <h3>{{ $now }}</h3>\n  </div>\n\n  <script>\n    console.log(\"Hello World!\");\n  </script>\n</body>\n</html>\n"
       },
       "type": "n8n-nodes-base.html",
       "typeVersion": 1.2,
       "position": [
-        816,
-        224
+        592,
+        192
       ],
-      "id": "f279f7c2-d8b2-47a7-9e65-9f0b8e1e5eaa",
+      "id": "e4cae88f-6b90-4435-92c1-3a63c4eaf4c5",
       "name": "Variables a mostrar en web"
     },
     {
@@ -59,10 +59,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -48,
-        208
+        -288,
+        176
       ],
-      "id": "97faeda5-6082-47f2-8153-4f967e4c3588",
+      "id": "77528189-64f6-4c50-bd4d-c4be9da4afcc",
       "name": "Webhook",
       "webhookId": "b79c7d9e-30ad-4a86-bf3f-13127203cd6b"
     },
@@ -84,10 +84,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        1024,
-        224
+        800,
+        192
       ],
-      "id": "6df74702-35e6-48ab-9461-36c2eb0aea7d",
+      "id": "113754a9-2c31-410b-9ca5-ab8fe10f42fd",
       "name": "Respond to Webhook"
     },
     {
@@ -100,10 +100,10 @@
       "type": "n8n-nodes-base.dateTime",
       "typeVersion": 2,
       "position": [
-        608,
-        224
+        384,
+        192
       ],
-      "id": "b86e50db-a7e6-43a3-9e8b-f52b1fe6a829",
+      "id": "0596b74a-1a7b-4bd3-9fbf-ac77233b17fa",
       "name": "Date & Time"
     }
   ],
@@ -169,7 +169,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "63a27b0b-1bcc-471a-a4c2-ac692f1090d5",
+  "versionId": "64d8df90-6b92-4c2e-bd06-01418d00fc83",
   "meta": {
     "instanceId": "f36c64b13bbb7748bd9d1fa29e9a2d15f3b8329608b51a4e86db824070316d3e"
   },
