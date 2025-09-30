@@ -1,0 +1,178 @@
+{
+  "name": "Crear Pagina web",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ee0a204-6fda-4cd5-ac52-2d3074740f0f",
+              "name": "message",
+              "value": "Este es mi primer workflow en n8n!!",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        192,
+        224
+      ],
+      "id": "e10c8ace-20eb-4610-ab30-00c4659765c6",
+      "name": "Crear Mensaje"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        400,
+        224
+      ],
+      "id": "fc389af2-c813-46b0-9c65-d190ed8c5a97",
+      "name": "get dateTime"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>{{ $workflow.name }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <h1>{{ $workflow.name }}</h1>\n    <h2>{{ $('Crear Mensaje').item.json.message }}</h2>\n    <h3>{{ $json.formattedDate }}</h3>\n  </div>\n</body>\n</html>\n\n<style>\n.container {\n  background-color: #ffffff;\n  text-align: center;\n  padding: 16px;\n  border-radius: 8px;\n}\n\nh1 {\n  color: #ff6d5a;\n  font-size: 24px;\n  font-weight: bold;\n  padding: 8px;\n}\n\nh2 {\n  color: #909399;\n  font-size: 18px;\n  font-weight: bold;\n  padding: 8px;\n}\n</style>\n\n<script>\nconsole.log(\"Hello World!\");\n</script>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        224
+      ],
+      "id": "f279f7c2-d8b2-47a7-9e65-9f0b8e1e5eaa",
+      "name": "Variables a mostrar en web"
+    },
+    {
+      "parameters": {
+        "path": "mi-pagina-web",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        208
+      ],
+      "id": "97faeda5-6082-47f2-8153-4f967e4c3588",
+      "name": "Webhook",
+      "webhookId": "b79c7d9e-30ad-4a86-bf3f-13127203cd6b"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1024,
+        224
+      ],
+      "id": "6df74702-35e6-48ab-9461-36c2eb0aea7d",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $json.currentDate }}",
+        "format": "yyyy-MM-dd",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        608,
+        224
+      ],
+      "id": "b86e50db-a7e6-43a3-9e8b-f52b1fe6a829",
+      "name": "Date & Time"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Crear Mensaje": {
+      "main": [
+        [
+          {
+            "node": "get dateTime",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get dateTime": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variables a mostrar en web": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Crear Mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Variables a mostrar en web",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "63a27b0b-1bcc-471a-a4c2-ac692f1090d5",
+  "meta": {
+    "instanceId": "f36c64b13bbb7748bd9d1fa29e9a2d15f3b8329608b51a4e86db824070316d3e"
+  },
+  "id": "wKJ7TPiShZeMmf08",
+  "tags": []
+}
