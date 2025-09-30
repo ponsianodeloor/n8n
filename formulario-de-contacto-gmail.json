@@ -1,0 +1,105 @@
+{
+  "name": "Formulario de Contacto",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Quieres que hagamos tu proyecto?",
+        "formDescription": "Contacta con nosotros si quieres que hagamos tu aplicacion web, automatizacion, web app con IA, lo que se relacione con desarrollo de software",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Nombre",
+              "placeholder": "Nombre",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Apellidos",
+              "placeholder": "Apellidos",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "Email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Celular",
+              "placeholder": "Telefono"
+            },
+            {
+              "fieldLabel": "Propuesta",
+              "fieldType": "textarea",
+              "placeholder": "Propuesta",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": true,
+          "path": "formulario-de-contacto",
+          "ignoreBots": true
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "724f0269-9fad-462e-82af-401096e5ebba",
+      "name": "On form submission",
+      "webhookId": "3a462aa9-0e79-4e3e-b704-c6f4a01f85bd"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Gracias por contactarte con k8s-ponsiano",
+        "message": "=Estimado/a  {{ $json.Nombre }} {{ $json.Apellidos }} <br>\n\nSaludos cordiales\n<br>\n\nSe ha contactado con nosotros para {{ $json.Propuesta }}, con gusto atenderemos su solicitud en el menor tiempo posible",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1ff96497-6f76-4cf2-889a-eb785a16111f",
+      "name": "Send a message",
+      "webhookId": "789f4723-5b39-40a9-acd0-cb8767ba6bdb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VAnNcViFGyZ6R6qg",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "604cc02a-7c1d-4e28-a77d-6a2e3b1e644a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f36c64b13bbb7748bd9d1fa29e9a2d15f3b8329608b51a4e86db824070316d3e"
+  },
+  "id": "2b6VKMFe6ubSxpAU",
+  "tags": []
+}
