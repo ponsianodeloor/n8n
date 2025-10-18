@@ -1,0 +1,258 @@
+{
+  "name": "agendarDesdeEmail",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=asunto: {{ $json.subject }}\nanaliza {{ $json.textAsHtml }}\n\n1. Reconstruye el cuerpo completo del correo. Conserva todo el contenido sin recortarlo ni resumirlo.\n2. A partir del cuerpo completo, extrae: la fecha y hora indicadas despues de las frases \"segun fecha de instalacion de audiencia\" o \"cuando se seniala la audiencia en la presente causa para\", y la sala/piso.\n\n3. Convierte la fecha y hora a formato ISO \"YYYY-MM-DDTHH:mm\" asumiendo zona horaria America/Guayaquil.\n4. Llama a la herramienta \"Create an event\" de Google Calendar con:\n   - calendar = \"primary\"\n   - summary = \"Asunto - Juicio No - Nombre Litigante\"\n   - description = cuerpo completo del correo (sin resumir).\n   - location = \"Sala {sala}, Piso {piso}\" si estan disponibles.\n   - start = fecha y hora convertidas, timezone = \"America/Guayaquil\".\n   - end = una hora despues del inicio si no hay hora de fin.\n5. Confirma la creacion del evento como respuesta final.\n\nSi falta informacion esencial o el remitente es distinto, responde \"Ignorar\" y no llames a ninguna herramienta. ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        -64
+      ],
+      "id": "6b4bec92-cc71-4822-b2ad-de6e349b8ac6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        160
+      ],
+      "id": "3c469d78-4eb0-4ecd-8f3c-a48f74e7934f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "mJwjRiZu5Di4U0PT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        384
+      ],
+      "id": "dce55b93-a662-4ff5-8fa3-ef58599e357c",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTimeTool",
+      "typeVersion": 2,
+      "position": [
+        432,
+        160
+      ],
+      "id": "21c41570-0ed5-46d2-aa31-8daa7adb738b",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "ponsianodeloor@gmail.com",
+          "mode": "list",
+          "cachedResultName": "ponsianodeloor@gmail.com"
+        },
+        "start": "=",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        768,
+        -64
+      ],
+      "id": "3fb8ddc9-573c-4cd3-a130-03598861b565",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "CE6zGuaLPVM3V8tL",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        160
+      ],
+      "id": "cf8dbd46-5727-4ad4-abcb-6824ff75f1dd",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "88ee6722-4a08-4f05-a1fd-669921132146",
+              "name": "textAsHtml",
+              "value": "={{ $json.textAsHtml }}",
+              "type": "string"
+            },
+            {
+              "id": "26e4bf20-48cd-40d9-ae1a-d479038d3d0e",
+              "name": "subject",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        -64
+      ],
+      "id": "18b100b4-1222-482a-9565-f9f6f9897b15",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "sender": "ponsianodeloor@outlook.com"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -192,
+        -32
+      ],
+      "id": "241a9abc-1ffd-4461-94f0-936c5acd0fd5",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VAnNcViFGyZ6R6qg",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9c3366b6-0206-4074-91da-b263c6a57ebf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f36c64b13bbb7748bd9d1fa29e9a2d15f3b8329608b51a4e86db824070316d3e"
+  },
+  "id": "IotQCtyo9f0sbT8C",
+  "tags": []
+}

@@ -1,0 +1,166 @@
+{
+  "name": "Formulario de Contacto Guardar Clientes DB",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Quieres que hagamos tu proyecto?",
+        "formDescription": "Contacta con nosotros si quieres que hagamos tu aplicacion web, automatizacion, web app con IA, lo que se relacione con desarrollo de software",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Nombre",
+              "placeholder": "Nombre",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Apellidos",
+              "placeholder": "Apellidos",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "Email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Celular",
+              "placeholder": "Telefono"
+            },
+            {
+              "fieldLabel": "Propuesta",
+              "fieldType": "textarea",
+              "placeholder": "Propuesta",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": true,
+          "path": "formulario-de-contacto",
+          "ignoreBots": true
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5bdfd547-bcdc-4e4d-afef-96b89d70ab19",
+      "name": "On form submission",
+      "webhookId": "d777bfd9-ff3c-47e0-8f12-ff8853448746"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "Gracias por contactarte con k8s-ponsiano",
+        "message": "=Estimado/a {{ $('On form submission').item.json.Nombre }}  {{ $('On form submission').item.json.Apellidos }}<br>\n\nSaludos cordiales\n<br>\n\nSe ha contactado con nosotros para {{ $('On form submission').item.json.Propuesta }}, con gusto atenderemos su solicitud en el menor tiempo posible",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        512,
+        0
+      ],
+      "id": "712cde5f-0a0c-4e5f-9357-8b5a1cc867e0",
+      "name": "Send a message",
+      "webhookId": "a9994d48-74b2-4374-952e-4f66a7a219cb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VAnNcViFGyZ6R6qg",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "contacto",
+          "mode": "list",
+          "cachedResultName": "contacto"
+        },
+        "dataMode": "defineBelow",
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "nombre",
+              "value": "={{ $json.Nombre }}"
+            },
+            {
+              "column": "apellidos",
+              "value": "={{ $json.Apellidos }}"
+            },
+            {
+              "column": "email",
+              "value": "={{ $json.Email }}"
+            },
+            {
+              "column": "celular",
+              "value": "={{ $json.Celular }}"
+            },
+            {
+              "column": "propuesta",
+              "value": "={{ $json.Propuesta }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        256,
+        -128
+      ],
+      "id": "0d440676-2949-49f4-8393-6418e1c2b1e2",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "mySql": {
+          "id": "MzlWsQjPWLN6F7RD",
+          "name": "MySQL account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6238f6ac-77e5-42a8-aaf2-1ed971b12cd8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f36c64b13bbb7748bd9d1fa29e9a2d15f3b8329608b51a4e86db824070316d3e"
+  },
+  "id": "fGAEa47xY9TUXeZf",
+  "tags": []
+}
