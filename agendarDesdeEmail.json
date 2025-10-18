@@ -4,16 +4,16 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=asunto: {{ $json.subject }}\nanaliza {{ $json.textAsHtml }}\n\n1. Reconstruye el cuerpo completo del correo. Conserva todo el contenido sin recortarlo ni resumirlo.\n2. A partir del cuerpo completo, extrae: la fecha y hora indicadas despues de las frases \"segun fecha de instalacion de audiencia\" o \"cuando se seniala la audiencia en la presente causa para\", y la sala/piso.\n\n3. Convierte la fecha y hora a formato ISO \"YYYY-MM-DDTHH:mm\" asumiendo zona horaria America/Guayaquil.\n4. Llama a la herramienta \"Create an event\" de Google Calendar con:\n   - calendar = \"primary\"\n   - summary = \"Asunto - Juicio No - Nombre Litigante\"\n   - description = cuerpo completo del correo (sin resumir).\n   - location = \"Sala {sala}, Piso {piso}\" si estan disponibles.\n   - start = fecha y hora convertidas, timezone = \"America/Guayaquil\".\n   - end = una hora despues del inicio si no hay hora de fin.\n5. Confirma la creacion del evento como respuesta final.\n\nSi falta informacion esencial o el remitente es distinto, responde \"Ignorar\" y no llames a ninguna herramienta. ",
+        "text": "=Eres un asistente extractor para notificaciones judiciales de Ecuador.\n\nFlujo de trabajo:\n1. Reconstruye el cuerpo completo del correo en texto plano (sin etiquetas HTML) conservando los saltos de linea.\n2. Identifica la fecha y hora de la audiencia y el lugar (sala/piso) solo cuando aparezcan despues de frases como:\n   - \"segun fecha de instalacion de audiencia\"\n   - \"se seniala la audiencia en la presente causa para\"\n   - o cualquier mension que incluya la palabra \"audiencia\".\n   No uses la \"Fecha de Notificacion\" como referencia para el evento.\n3. Normaliza fechas y horas aceptando variantes como \"08h30\", \"08H30\", \"15:45\", \"3 pm\", \"15h\", \"08 de OCTUBRE del 2025\", \"8/10/2025\", \"2025-10-08\" y meses con o sin tildes. Convierte el resultado a:\n   - start: \"YYYY-MM-DDTHH:mm:ss\"\n   - end: \"YYYY-MM-DDTHH:mm:ss\" (si no hay hora de fin, suma 1 hora al inicio)\n   - startRfc3339: \"YYYY-MM-DDTHH:mm:ss-05:00\"\n   - endRfc3339: \"YYYY-MM-DDTHH:mm:ss-05:00\"\n   Usa siempre la zona horaria America/Guayaquil.\n4. Extrae \"Juicio No\" y \"Nombre Litigante\" del asunto o del cuerpo (patrones \"Juicio No:\", \"Juicio N.\", \"Nombre Litigante:\", \"A:\"). Si faltan datos, rellena con el asunto original o \"Pendiente\".\n5. Construye los campos del evento:\n   - summary: \"Asunto - Juicio No - Nombre Litigante\" con los valores extraidos o los sustitutos indicados.\n   - description: cuerpo reconstruido en texto plano, sin resumir.\n   - location: \"Sala {sala}, Piso {piso}\" cuando ambos existan; si solo hay uno, usa el disponible; si no se puede desglosar, usa el texto completo del lugar mencionado junto a la audiencia.\n6. Comprueba si ya existe un evento en el horario calculado:\n   - Llama a la herramienta \"Get availability in a calendar in Google Calendar\" con Calendar = \"ponsianodeloor@gmail.com\", Start_Time = startRfc3339 y End_Time = endRfc3339.\n   - Si la respuesta contiene un intervalo busy que cubre la hora de inicio calculada, responde unicamente \"Ignorar\" y no crees un nuevo evento.\n7. Si el intervalo esta libre, crea el evento llamando a \"Create an event in Google Calendar\" con:\n   - Start = startRfc3339\n   - End = endRfc3339\n   - summary, description, location y timezone = \"America/Guayaquil\" segun los valores calculados.\n8. Como salida final, responde unicamente con el JSON:\n{\n  \"summary\": \"...\",\n  \"description\": \"...\",\n  \"location\": \"...\",\n  \"start\": \"YYYY-MM-DDTHH:mm:ss\",\n  \"end\": \"YYYY-MM-DDTHH:mm:ss\",\n  \"startRfc3339\": \"YYYY-MM-DDTHH:mm:ss-05:00\",\n  \"endRfc3339\": \"YYYY-MM-DDTHH:mm:ss-05:00\",\n  \"timezone\": \"America/Guayaquil\"\n}\n   Si no procede, responde solo: Ignorar.\n\nReglas y validaciones:\n- No inventes datos. Si falta informacion esencial (fecha y hora de audiencia, lugar o remitente esperado), responde Ignorar.\n- No anadas texto adicional fuera del JSON o la palabra Ignorar.\n\nENTRADA\nAsunto: {{ $json.subject }}\nHTML: {{ $json.textAsHtml }}\n",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.2,
       "position": [
-        400,
-        -64
+        -192,
+        272
       ],
-      "id": "6b4bec92-cc71-4822-b2ad-de6e349b8ac6",
+      "id": "2b79d550-4439-46e1-b3f4-99a7cac64cca",
       "name": "AI Agent"
     },
     {
@@ -28,10 +28,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        144,
-        160
+        -448,
+        496
       ],
-      "id": "3c469d78-4eb0-4ecd-8f3c-a48f74e7934f",
+      "id": "e846abe9-d944-45e1-bce0-a5eb5f61e926",
       "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
@@ -45,10 +45,10 @@
       "type": "@n8n/n8n-nodes-langchain.toolThink",
       "typeVersion": 1.1,
       "position": [
-        560,
-        384
+        16,
+        656
       ],
-      "id": "dce55b93-a662-4ff5-8fa3-ef58599e357c",
+      "id": "e81dfbaa-e76f-44f3-a88e-a1e12fa33d60",
       "name": "Think"
     },
     {
@@ -58,37 +58,11 @@
       "type": "n8n-nodes-base.dateTimeTool",
       "typeVersion": 2,
       "position": [
-        432,
-        160
+        -160,
+        496
       ],
-      "id": "21c41570-0ed5-46d2-aa31-8daa7adb738b",
+      "id": "5849295d-701b-400e-afc7-d38f4f95dbb8",
       "name": "Date & Time"
-    },
-    {
-      "parameters": {
-        "calendar": {
-          "__rl": true,
-          "value": "ponsianodeloor@gmail.com",
-          "mode": "list",
-          "cachedResultName": "ponsianodeloor@gmail.com"
-        },
-        "start": "=",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.googleCalendar",
-      "typeVersion": 1.3,
-      "position": [
-        768,
-        -64
-      ],
-      "id": "3fb8ddc9-573c-4cd3-a130-03598861b565",
-      "name": "Create an event",
-      "credentials": {
-        "googleCalendarOAuth2Api": {
-          "id": "CE6zGuaLPVM3V8tL",
-          "name": "Google Calendar account"
-        }
-      }
     },
     {
       "parameters": {
@@ -98,10 +72,10 @@
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        288,
-        160
+        -304,
+        496
       ],
-      "id": "cf8dbd46-5727-4ad4-abcb-6824ff75f1dd",
+      "id": "d29c09e6-a626-469d-9007-59bd20bee235",
       "name": "Simple Memory"
     },
     {
@@ -127,10 +101,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        144,
-        -64
+        -448,
+        272
       ],
-      "id": "18b100b4-1222-482a-9565-f9f6f9897b15",
+      "id": "6517d36f-370d-459a-99c2-2fa770fd7811",
       "name": "Edit Fields"
     },
     {
@@ -151,15 +125,70 @@
       "type": "n8n-nodes-base.gmailTrigger",
       "typeVersion": 1.3,
       "position": [
-        -192,
-        -32
+        -784,
+        304
       ],
-      "id": "241a9abc-1ffd-4461-94f0-936c5acd0fd5",
+      "id": "79f39f43-bfef-446e-ae2b-153f1e56f296",
       "name": "Gmail Trigger",
       "credentials": {
         "gmailOAuth2": {
           "id": "VAnNcViFGyZ6R6qg",
           "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "ponsianodeloor@gmail.com",
+          "mode": "list",
+          "cachedResultName": "ponsianodeloor@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        496
+      ],
+      "id": "ced4944d-bdce-4f2b-8ba2-7b97495b31aa",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "CE6zGuaLPVM3V8tL",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "ponsianodeloor@gmail.com",
+          "mode": "list",
+          "cachedResultName": "ponsianodeloor@gmail.com"
+        },
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start_Time', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End_Time', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        544
+      ],
+      "id": "df6daf93-6a9c-4f22-9973-062240f99057",
+      "name": "Get availability in a calendar in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "CE6zGuaLPVM3V8tL",
+          "name": "Google Calendar account"
         }
       }
     }
@@ -210,17 +239,6 @@
         ]
       ]
     },
-    "AI Agent": {
-      "main": [
-        [
-          {
-            "node": "Create an event",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Gmail Trigger": {
       "main": [
         [
@@ -242,13 +260,35 @@
           }
         ]
       ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get availability in a calendar in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "9c3366b6-0206-4074-91da-b263c6a57ebf",
+  "versionId": "46f04d88-b65d-448a-b432-6e19678b37b6",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f36c64b13bbb7748bd9d1fa29e9a2d15f3b8329608b51a4e86db824070316d3e"
