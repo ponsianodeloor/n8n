@@ -1,0 +1,642 @@
+{
+  "name": "Telegram Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -224,
+        -240
+      ],
+      "id": "82c30976-7354-49a4-ad76-140d9cf7829a",
+      "name": "Telegram Trigger",
+      "webhookId": "473a8821-8619-4a1f-8e1b-c25dbc06527e",
+      "credentials": {
+        "telegramApi": {
+          "id": "BfqQ4o55g82POQgF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## /start || hola",
+        "height": 208,
+        "width": 304
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        -528
+      ],
+      "typeVersion": 1,
+      "id": "f4e27159-1c28-4e2a-a2ef-d408e7ef0716",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "de0cb4cc-27a8-4ea0-88e9-e53bde904785"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f0d71f64-d0ab-47e1-8f07-145d9af2996e",
+                    "leftValue": "={{ ($json.message?.text || $json.chat?.text || '').trim().toLowerCase() }}",
+                    "rightValue": "hola",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "953b18e8-e68c-4d91-b131-ea94ee913223",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "hola",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text-message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "cfdfc08f-c1b7-428f-a5df-0e47b99b3be6",
+                    "leftValue": "={{ $json.message.photo }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "array",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image-message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        0,
+        -240
+      ],
+      "id": "abd3729d-adbc-42cb-a97b-6c2a592bd3da",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "¡Hola, soy BioCanastoChatBot 🧺🌱!\nPide frutas y verduras frescas 🍎🥦, paga seguro y recibe hoy en casa. Usamos fundas y cajas biodegradables para cuidar el planeta 🌎💚.\n\nCómo funciona\n\nPregunta disponibilidad: “¿Qué frutas y verduras tienen hoy?”\n\nElige cantidades: por kg, 1/2 kg o por unidades.\n\nConfirma tu pedido y dinos a qué banco vas a transferir:\nPichincha, Guayaquil, Pacífico o Cooperativa JEP.\n\nNota: no se aceptan otros bancos.\n\nSube el comprobante (captura) con el número de transacción.\n\nEjemplo rápido\n\n“Quiero 2 kg de manzana, 1/2 kg de espinaca y 6 plátanos.”\n\n“Transferiré a Banco Pichincha.”\n\n“Adjunto comprobante: TRX-123456.”\n\n¿List@ para comenzar? Escribe “Ver disponibles” y armamos tu canasta 🍌🥬🧺.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        304,
+        -480
+      ],
+      "id": "24a3394e-8902-40b1-baf8-49b6e1f7e75c",
+      "name": "reply /start",
+      "webhookId": "65b431c4-1ab6-442e-aee8-2bca6e55008c",
+      "credentials": {
+        "telegramApi": {
+          "id": "BfqQ4o55g82POQgF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Chat Action",
+        "height": 240,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "6c48206e-8de1-4eec-aee5-d41b299f0589",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "sendChatAction",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        272,
+        -96
+      ],
+      "id": "8f3b9c7e-1517-41d5-9dae-c9972ad85aa4",
+      "name": "chatAction",
+      "webhookId": "f70c97b8-cd1b-435c-a758-95942c3f6fad",
+      "credentials": {
+        "telegramApi": {
+          "id": "BfqQ4o55g82POQgF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"text\": \"{{ $('Telegram Trigger').item.json.message.text }}\",\n  \"type\": \"message\",\n  \"ai\": \"\"\n}\n ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        -96
+      ],
+      "id": "53cc8982-10c9-4e82-b279-15033afd6b2b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  text: $input.first().json.text,\n  type: $input.first().json.type,\n  ai: $input.first().json.ai\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        -96
+      ],
+      "id": "dfda4421-03a9-4aec-b727-a4ccafe86d43",
+      "name": "Unir datos"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').item.json.message.text }}",
+        "options": {
+          "systemMessage": "Actúa como vendedor de frutas y verduras frescas para delivery. Tono cercano, respuestas breves, sin inventar datos. Tareas: mostrar catálogo, recomendar cantidades, armar carrito, calcular total, pedir dirección/horario/pago, confirmar pedido. Enfatiza empaques biodegradables y cero plásticos. Maneja faltantes con sustitutos. Moneda {{CURRENCY}}.\nUtiliza la herramienta sendMessageToClient para responder todos los mensajes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        -96
+      ],
+      "id": "cc5cfc72-1f86-44e5-832c-8e476adc8861",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        112
+      ],
+      "id": "63df3f83-69f5-485e-b682-6fa9cf2463f8",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "mJwjRiZu5Di4U0PT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        880,
+        192
+      ],
+      "id": "0a51afda-e2ab-4f69-ad25-61397d526b73",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        176
+      ],
+      "id": "02321456-9b51-4acb-8ccb-a3e59386fbc3",
+      "name": "sendMessageToClient",
+      "webhookId": "d708997f-e24c-47f2-86d7-2b7bcc05f29d",
+      "credentials": {
+        "telegramApi": {
+          "id": "BfqQ4o55g82POQgF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1248,
+        -96
+      ],
+      "id": "e6291300-af48-4801-ab4c-c67c64a4085f",
+      "name": "Send a text message",
+      "webhookId": "7a931c99-91cf-417b-8816-a8524208f0a8",
+      "credentials": {
+        "telegramApi": {
+          "id": "BfqQ4o55g82POQgF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Envio de Imagen \n",
+        "height": 272,
+        "width": 1024
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "7665b57e-5463-40e5-b84e-ba8bef1904db",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "operation": "sendChatAction",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        416
+      ],
+      "id": "de1b9a4f-6718-4d33-a04b-7f14788e777b",
+      "name": "writing",
+      "webhookId": "f70c97b8-cd1b-435c-a758-95942c3f6fad",
+      "credentials": {
+        "telegramApi": {
+          "id": "BfqQ4o55g82POQgF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return $('Telegram Trigger').first().json.message.photo[3] || $('Telegram Trigger').first().json.message.photo[2] || $('Telegram Trigger').first().json.message.photo[1] || $('Telegram Trigger').first().json.message.photo[0]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        416
+      ],
+      "id": "d9c54c71-4e78-416e-91e1-58a1b7fc9d35",
+      "name": "foto con mayor resolucion"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        416
+      ],
+      "id": "2719564d-55b4-43a9-80a0-df837efdde06",
+      "name": "Get a file",
+      "webhookId": "fac3f1d1-bcc5-4380-88a1-c442ba26d223",
+      "credentials": {
+        "telegramApi": {
+          "id": "BfqQ4o55g82POQgF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "={{ $('Telegram Trigger').item.json.message.caption || 'Que hay en la imagen?' }}\n\n",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        880,
+        416
+      ],
+      "id": "240f6c8d-f56a-4513-b4fd-81af68e5d12f",
+      "name": "Analyze image",
+      "credentials": {
+        "openAiApi": {
+          "id": "mJwjRiZu5Di4U0PT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.content }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        400
+      ],
+      "id": "48e1aeaf-38db-47df-82f9-58caec659905",
+      "name": "Send a text after image",
+      "webhookId": "7a931c99-91cf-417b-8816-a8524208f0a8",
+      "credentials": {
+        "telegramApi": {
+          "id": "BfqQ4o55g82POQgF",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "reply /start",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "reply /start",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "chatAction",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "writing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "chatAction": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Unir datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unir datos": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendMessageToClient": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "writing": {
+      "main": [
+        [
+          {
+            "node": "foto con mayor resolucion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "foto con mayor resolucion": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Send a text after image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3a58ccee-a6ab-4a1a-8123-efc085518b78",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f36c64b13bbb7748bd9d1fa29e9a2d15f3b8329608b51a4e86db824070316d3e"
+  },
+  "id": "KwRjwUvUOpA0mEb7",
+  "tags": []
+}

@@ -1,0 +1,248 @@
+{
+  "name": "Chatbot para Negocios Html",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "30e2bfc0-fb9b-4559-846d-bf41b04576a2",
+      "name": "When chat message received",
+      "webhookId": "15c538b9-acaf-4854-b25c-dc13a750fff0"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1409a166-3b98-4a5b-80ac-64a086c21a81",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "Eres ContabEcu, un asistente virtual especializado EXCLUSIVAMENTE en contabilidad, tributación y finanzas del Ecuador.\n\nALCANCE (responde solo si aplica al contexto ecuatoriano):\n\nSRI: IVA, IR, retenciones, RIMPE, ICE, ISD, anexos, comprobantes electrónicos, ATS, DIMM/Formularios en línea, facturación electrónica.\n\nNIIF y NIIF para PYMES aplicadas en Ecuador.\n\nEstados financieros, conciliación bancaria, costos, activos, pasivos, patrimonio, ingresos y gastos.\n\nObligaciones de personas naturales y jurídicas, calendarios tributarios, deberes formales.\n\nProcedimientos y buenas prácticas contables en el contexto ecuatoriano.\n\nLÍMITES (rechaza cortésmente):\n\nCualquier tema fuera de contabilidad/tributación/finanzas del Ecuador (p. ej., medicina, política, psicología, otros países).\n\nConsultas legales vinculantes, defensa tributaria avanzada o representación ante la autoridad.\n\nDesarrollo de software/código, salvo sea para explicar un proceso contable (sin escribir código).\n\nCUANDO ESTÉ FUERA DE ALCANCE:\nResponde EXACTAMENTE con este texto y nada más:\n“Puedo ayudarte únicamente en temas de contabilidad, tributación o normativa financiera del Ecuador.”\n\nESTILO Y CALIDAD:\n\nEscribe en español (variante Ecuador), tono profesional y pedagógico.\n\nSé conciso, con pasos claros y ejemplos simples cuando aporten.\n\nSi mencionas una tasa, plazo o resolución, cita referencia normativa o guía SRI de forma breve (nombre o código y año si lo conoces).\n\nSi falta un dato clave (fechas, tipo de contribuyente, régimen), solicita solo lo mínimo indispensable con preguntas puntuales.\n\nNo inventes normativa. Si no estás 100% seguro, indica que se debe verificar en la norma vigente del SRI o en NIIF aplicables.\n\nFORMATO DE RESPUESTA:\n\nResumen breve (1–2 líneas).\n\nDesarrollo en viñetas o pasos.\n\nEjemplo numérico si aplica.\n\nReferencia(s) normativa(s) breve(s) (cuando corresponda).\n\nSEGURIDAD Y EXACTITUD:\n\nPrefiere rangos y explicaciones prudentes cuando la norma sea casuística.\n\nNo des opiniones personales; mantén enfoque técnico-contable.\n\n📧 INSTRUCCIÓN ADICIONAL:\n\nSi el usuario solicita un plan de capacitación, debes:\n\nIndicar que el plan consiste en 40 clases de aproximadamente 1 hora cada una.\n\nIndicar que el costo total es de $200.\n\nSolicitar los nombres, apellidos, celular y correo electrónico para enviar un correo automático al administrador con el detalle de la solicitud, incluyendo:\n\nNombre del usuario (si está disponible).\n\nMensaje: “El usuario ha solicitado el plan de capacitación (40 clases de 1 hora cada una, costo total $200). Favor tomar contacto para coordinar la inscripción y el cronograma.”"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "13da0fdb-3a7c-4be9-8d9d-b2f221abd978",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        256
+      ],
+      "id": "00932541-1cc3-4bb8-b74c-d5e3d0558750",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTimeTool",
+      "typeVersion": 2,
+      "position": [
+        624,
+        256
+      ],
+      "id": "e6939c0e-a95a-4c8a-9ec9-e28fa67bc9d2",
+      "name": "Date & Time1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        352
+      ],
+      "id": "80fe0c70-e0f7-4c57-b220-20d3af0ed661",
+      "name": "Think"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        816,
+        448
+      ],
+      "id": "3f447ca2-cb63-4c86-ae25-0e46ffc80f52",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        208
+      ],
+      "id": "f8d39c18-bf5b-4886-a943-1844a9ea120c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "mJwjRiZu5Di4U0PT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "ponsianodeloor@gmail.com",
+        "subject": "Presupuesto de fecha ",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        912,
+        384
+      ],
+      "id": "0592223c-d231-46f6-8131-d0c35176751c",
+      "name": "Send a message administrator",
+      "webhookId": "a0e6c09a-8a09-40ef-ad9e-5b9441a8c7c0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VAnNcViFGyZ6R6qg",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message administrator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "034f23b2-72a3-4533-8cbc-f0c542cc8f66",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f36c64b13bbb7748bd9d1fa29e9a2d15f3b8329608b51a4e86db824070316d3e"
+  },
+  "id": "WMJbdCQJmfNQmATw",
+  "tags": []
+}
